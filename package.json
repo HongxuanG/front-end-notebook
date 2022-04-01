@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "AaronGuo's front-end notebook",
   "main": "index.js",
+  "type":"modules",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
+    "testPromise": "promises-aplus-tests src/html-css-js/js/promise.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
@@ -13,6 +15,8 @@
   "devDependencies": {
     "@aaronghx/eslint-config": "^0.1.1",
     "eslint": "^8.11.0",
+    "jest": "^27.5.1",
+    "promises-aplus-tests": "^2.1.2",
     "typescript": "^4.6.2"
   }
 }
