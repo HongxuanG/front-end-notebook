@@ -6,7 +6,7 @@
   "type":"modules",
   "scripts": {
     "test": "jest",
-    "testPromise": "promises-aplus-tests src/html-css-js/js/promise.ts",
+    "testPromise": "promises-aplus-tests src/html-css-js/js/Step5_promise.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },

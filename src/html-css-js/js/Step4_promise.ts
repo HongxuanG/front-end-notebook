@@ -2,7 +2,7 @@
  * @Author: HongxuanG 
  * @Date: 2022-04-01 16:01:49 
  * @Last Modified by: HongxuanG
- * @Last Modified time: 2022-04-01 17:24:23
+ * @Last Modified time: 2022-04-02 11:37:25
  */
 namespace Step4 {
   // 1. 解决循环调用的问题，抛出错误
@@ -52,9 +52,10 @@ namespace Step4 {
     then(onFulfilled: IThenCallback, onRejected?: IThenCallback) { // 使用箭头函数定义而不是普通函数定义，因为使用普通函数的话里面的this会指向window或者undefined
       let promise = new PromiseByMyself((resolve, reject) => {
         if (this.status === PromiseStatus.Fulfilled) {
-          let returnBody = onFulfilled(this.value)
-          // 处理onFulfilled的返回值类型，如果是promise类型.then 如果不是promise类型resolve()
+          // 等待promise被初始化完成，解决方案是通过微任务queueMicrotask延迟执行
           queueMicrotask(() => {
+            // 处理onFulfilled的返回值类型，如果是promise类型.then 如果不是promise类型resolve()
+            let returnBody = onFulfilled(this.value)
 
             resolvePromise(promise, returnBody, resolve, reject)
           })
@@ -82,23 +83,21 @@ namespace Step4 {
   }
   // 没有触发
   let promise = new PromiseByMyself((resolve) => {
-    resolve('success') // 异步执行 then都跑完了才改变状态
+    resolve('success')
   })
-  promise.then(function (res: unknown) {
+  const cature1 = promise.then(function (res: unknown) {
     console.log(1);
-    console.log(res) // 2秒过后 output: success
-    return '11'
-  }).then(function (res: unknown) {
+    console.log(res)
+    return cature1
+  })
+  // TypeError: 不能调用自身, 你懂不懂promise啊!
+  // good job！这就完成了报错了，通过queueMicrotask获取到已初始化的promise，然后传到resolvePromise里面
+  cature1.then(function (res: unknown) {
     console.log(2);
     console.log(res) // 2秒过后 output: 11
-    return '44'
-  }).then(function (res: unknown) {
-    console.log(3);
-    console.log(res) // 2秒过后 output: 44
-    return '55'
-  }).then(function (res: unknown) {
-    console.log(4);
-    console.log(res) // 2秒过后 output: 55
+  }, function (reason) {
+    console.log('then的回调函数return的是自身')
+    console.log(reason)
   })
 
 }
