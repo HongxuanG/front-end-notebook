@@ -162,11 +162,13 @@ PromiseByMyself.deferred = function () {
   })
   return result
 }
+// 错误：当x是对象或者function时 x = x.then
+// promise-Aplus-test
 
 // // 验证静态方法的resolve
 // PromiseByMyself.resolve('name').then((res) => {
 //   console.log(res)
 // })
 // console.log(PromiseByMyself.reject('error'))
-module.exports = PromiseByMyself
+// module.exports = PromiseByMyself
 
