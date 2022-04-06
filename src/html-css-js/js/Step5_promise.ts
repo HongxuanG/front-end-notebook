@@ -2,7 +2,7 @@
  * @Author: HongxuanG 
  * @Date: 2022-04-01 16:01:49 
  * @Last Modified by: HongxuanG
- * @Last Modified time: 2022-04-06 18:10:09
+ * @Last Modified time: 2022-04-06 18:15:21
  */
 // 1. 处理执行器抛出的错误
 // 2. 添加异常处理
@@ -197,6 +197,8 @@ PromiseByMyself.deferred = function () {
   })
   return result
 }
+// 错误：当x是对象或者function时 x = x.then
+// promise-Aplus-test
 
 // // 验证静态方法的resolve
 // PromiseByMyself.resolve('name').then((res) => {
@@ -204,3 +206,4 @@ PromiseByMyself.deferred = function () {
 // })
 // console.log(PromiseByMyself.reject('error'))
 module.exports = PromiseByMyself
+
