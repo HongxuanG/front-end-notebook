@@ -2,7 +2,7 @@
  * @Author: HongxuanG 
  * @Date: 2022-04-01 16:01:49 
  * @Last Modified by: HongxuanG
- * @Last Modified time: 2022-04-07 13:38:58
+ * @Last Modified time: 2022-04-07 14:38:27
  */
 // 1. 处理执行器抛出的错误
 // 2. 添加异常处理
@@ -13,13 +13,18 @@ enum PromiseStatus {
   Fulfilled = 'fulfilled',
   Rejected = 'rejected'
 }
-type IResolve<T> = (value: T) => PromiseByMyself<T> | unknown
-type IReject = (reason: any) => PromiseByMyself | unknown
+type IResolve<T> = (value?: T | PromiseLike<T>) => void
+type IReject = (reason?: any) => void
 type onFulfilled<T, TResult1> = ((value: T) => TResult1 | PromiseLike<T>) | null | undefined
 type onRejected<TResult2> = ((reason: any) => TResult2 | PromiseLike<TResult2>) | null | undefined
+
+function isPromise(value: any) {
+  return ((typeof value === 'object' || typeof value === 'function') && value !== null && typeof value.then === 'function')
+}
+
 // 执行器
 interface Executor<T> {
-  (resolve?: IResolve<T>, reject?: IReject): void
+  (resolve: IResolve<T>, reject: IReject): void
 }
 class PromiseByMyself<T = unknown> {
   constructor(executor: Executor<T>) {
@@ -38,31 +43,40 @@ class PromiseByMyself<T = unknown> {
   private onRejectedCallbacks: IReject[] = []
   // 解决
   private resolve: IResolve<T> = (value) => {
-    if (this.status === PromiseStatus.Pending) {
-      this.status = PromiseStatus.Fulfilled
-      this.value = value
-      // 有回调函数被存储起来，就执行
-      while (this.onFulfilledCallbacks.length) {
-        (this.onFulfilledCallbacks.shift() as IResolve<T>)(value)
-      }
+    if (isPromise(value)) {
+      // 实现resolve(promise) 最后输出promise的resolve这样的一个值穿透
+      (value as PromiseLike<T>).then(this.resolve, this.reject)
+      return
     }
+    queueMicrotask(() => {
+      if (this.status === PromiseStatus.Pending) {
+        this.status = PromiseStatus.Fulfilled
+        this.value = value as T
+        // 有回调函数被存储起来，就执行
+        while (this.onFulfilledCallbacks.length) {
+          (this.onFulfilledCallbacks.shift() as IResolve<T>)(value)
+        }
+      }
+    })
   }
   // 拒绝
   private reject: IReject = (reason) => {  // 使用箭头函数定义而不是普通函数定义，因为使用普通函数的话里面的this会指向window或者undefined
-    if (this.status === PromiseStatus.Pending) {
-      this.status = PromiseStatus.Rejected
-      this.reason = reason
-      while (this.onRejectedCallbacks.length) {
-        (this.onRejectedCallbacks.shift() as IReject)(reason)
+    queueMicrotask(() => {
+      if (this.status === PromiseStatus.Pending) {
+        this.status = PromiseStatus.Rejected
+        this.reason = reason
+        while (this.onRejectedCallbacks.length) {
+          (this.onRejectedCallbacks.shift() as IReject)(reason)
+        }
       }
-    }
+    })
   }
   /**
    * 静态方法的resolve
    * @param value 值
    * @returns PromiseByMyself
    */
-  static resolve<T>(value?: T | PromiseLike<T>) {
+  static resolve<T>(value?: T | PromiseLike<T>): PromiseByMyself<T> {
     if (value instanceof PromiseByMyself) {
       return value
     } else {
@@ -81,7 +95,16 @@ class PromiseByMyself<T = unknown> {
       reject?.(reason)
     })
   }
-  then<TResult1 = T, TResult2 = never>(onFulfilled?: onFulfilled<T, TResult1>, onRejected?: onRejected<TResult2>) { // 使用箭头函数定义而不是普通函数定义，因为使用普通函数的话里面的this会指向window或者undefined
+  /**
+   * 可以链式调用
+   * @param onFulfilled 成功状态后执行的函数
+   * @param onRejected 拒绝状态后执行的函数
+   * @returns 返回一个new Promise而不是自身的promise实例
+   */
+  then = <TResult1 = T, TResult2 = never>(
+    onFulfilled?: onFulfilled<T, TResult1>,
+    onRejected?: onRejected<TResult2>
+  ) => { // 使用箭头函数定义而不是普通函数定义，因为使用普通函数的话里面的this会指向window或者undefined
     let onFulfilledFunc = typeof onFulfilled === 'function' ? onFulfilled : (value: any) => value
     let onRejectedFunc = typeof onRejected === 'function' ? onRejected : (reason: unknown) => { throw reason }
 
@@ -127,7 +150,12 @@ class PromiseByMyself<T = unknown> {
     return promise2
   }
   // 这里是处理分析then的第一个参数(onFulfilledFunc)return 的东西，第二个参数(onRejectedFunc)的东西
-  private resolvePromise<T>(promise: PromiseByMyself<T>, x: T | PromiseLike<T>, resolve?: IResolve<T>, reject?: IReject) {
+  private resolvePromise = <T>(
+    promise: PromiseByMyself<T>,
+    x: T | PromiseLike<T>,
+    resolve?: IResolve<T>,
+    reject?: IReject
+  ) => {
     let called = false
     // 如果promise和x引用同一个对象，则用TypeError作为原因拒绝（reject）promise。
     if (promise === x) {
@@ -187,19 +215,19 @@ class PromiseByMyself<T = unknown> {
     }
   }
 }
-
+// let promise2 = new PromiseByMyself((resolve, reject) => {
+//   resolve('值穿透')
+// })
 // let promise1 = new PromiseByMyself((resolve, reject) => {
 //   console.log('1')
 //   setTimeout(() => {
 //     // 模拟请求是的错误
 //     // throw new Error('执行器发生错误')
-//     reject(1000)
+//     resolve?.(promise2)
 //   }, 1000)
 // })
-// promise1.then().then().then().then().then((value) => {
+// promise1.then((value) => {
 //   console.log('继续then下去', value)
-// }, (reason) => {
-//   console.log('error', reason)
 // })
 
 
@@ -225,7 +253,15 @@ PromiseByMyself.deferred = function () {
 // console.log(PromiseByMyself.reject('error'))
 module.exports = PromiseByMyself
 
-// let promsie2 = new Promise<'mna'>((resolve, reject) => {
 
+
+// resolve值穿透实例
+// let promise1 = new Promise((resolve, reject) => {
+//   resolve('name1')
 // })
-// promsie2.then()
+// let promsie2 = new Promise((resolve, reject) => {
+//   return resolve(promise1)
+// })
+// promsie2.then(res => {
+//   console.log(res)
+// })
