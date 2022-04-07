@@ -2,7 +2,7 @@
  * @Author: HongxuanG
  * @Date: 2022-04-01 16:01:49
  * @Last Modified by: HongxuanG
- * @Last Modified time: 2022-04-06 18:10:09
+ * @Last Modified time: 2022-04-07 13:37:01
  */
 // 1. 处理执行器抛出的错误
 // 2. 添加异常处理
@@ -17,7 +17,6 @@ var PromiseByMyself = /** @class */ (function () {
     function PromiseByMyself(executor) {
         var _this = this;
         this.status = PromiseStatus.Pending;
-        this.value = null;
         this.reason = null;
         // 储存被异步函数耽误的Fulfilled状态的then里面的Fulfilled回调函数
         this.onFulfilledCallbacks = [];
@@ -62,18 +61,18 @@ var PromiseByMyself = /** @class */ (function () {
         }
         else {
             return new PromiseByMyself(function (resolve) {
-                resolve(value);
+                resolve === null || resolve === void 0 ? void 0 : resolve(value);
             });
         }
     };
     /**
      * 静态方法的reject
-     * @param reason 拒绝的鳄梨油
+     * @param reason 拒绝的理由
      * @returns PromiseByMyself
      */
     PromiseByMyself.reject = function (reason) {
         return new PromiseByMyself(function (resolve, reject) {
-            reject(reason);
+            reject === null || reject === void 0 ? void 0 : reject(reason);
         });
     };
     PromiseByMyself.prototype.then = function (onFulfilled, onRejected) {
@@ -83,11 +82,11 @@ var PromiseByMyself = /** @class */ (function () {
         var promise2 = new PromiseByMyself(function (resolve, reject) {
             var fulfilledMicrotask = function () {
                 // 等待promise被初始化完成，解决方案是通过微任务queueMicrotask延迟执行
-                queueMicrotask(function () {
+                setTimeout(function () {
                     try {
                         // 处理onFulfilled的返回值类型，如果是promise类型.then 如果不是promise类型resolve()
                         var x = onFulfilledFunc(_this.value);
-                        resolvePromise(promise2, x, resolve, reject);
+                        _this.resolvePromise(promise2, x, resolve, reject);
                     }
                     catch (error) {
                         reject && reject(error);
@@ -96,11 +95,11 @@ var PromiseByMyself = /** @class */ (function () {
             };
             var rejectedMicrotask = function () {
                 // 等待promise被初始化完成，解决方案是通过微任务queueMicrotask延迟执行
-                queueMicrotask(function () {
+                setTimeout(function () {
                     try {
                         // 处理onFulfilled的返回值类型，如果是promise类型.then 如果不是promise类型resolve()
                         var x = onRejectedFunc(_this.reason);
-                        resolvePromise(promise2, x, resolve, reject);
+                        _this.resolvePromise(promise2, x, resolve, reject);
                     }
                     catch (error) {
                         reject && reject(error);
@@ -121,58 +120,74 @@ var PromiseByMyself = /** @class */ (function () {
         });
         return promise2;
     };
-    return PromiseByMyself;
-}());
-// 这里是处理分析then的第一个参数(onFulfilledFunc)return 的东西，第二个参数(onRejectedFunc)的东西
-function resolvePromise(promise, x, resolve, reject) {
-    var called = false;
-    // 如果promise和x引用同一个对象，则用TypeError作为原因拒绝（reject）promise。
-    if (promise === x) {
-        return reject ? reject(new TypeError('不能调用自身, 你懂不懂promise啊!')) : new TypeError('不能调用自身, 你懂不懂promise啊!');
-    }
-    // 如果x是一个promise,采用promise的状态
-    if (x instanceof PromiseByMyself) {
-        x.then(resolve, reject);
-    }
-    else {
-        if (x !== null && (typeof x === 'object' || typeof x === 'function')) {
+    // 这里是处理分析then的第一个参数(onFulfilledFunc)return 的东西，第二个参数(onRejectedFunc)的东西
+    PromiseByMyself.prototype.resolvePromise = function (promise, x, resolve, reject) {
+        var _this = this;
+        var called = false;
+        // 如果promise和x引用同一个对象，则用TypeError作为原因拒绝（reject）promise。
+        if (promise === x) {
+            return reject === null || reject === void 0 ? void 0 : reject(new TypeError('不能调用自身, 你懂不懂promise啊!'));
+        }
+        // 如果x是一个promise,采用promise的状态
+        if (x instanceof PromiseByMyself) {
+            if (x.status === PromiseStatus.Pending) {
+                x.then(function (y) {
+                    _this.resolvePromise(promise, y, resolve, reject);
+                }, reject);
+            }
+            else if (x.status === PromiseStatus.Fulfilled) {
+                resolve === null || resolve === void 0 ? void 0 : resolve(x.value);
+            }
+            else if (x.status === PromiseStatus.Rejected) {
+                reject === null || reject === void 0 ? void 0 : reject(x.reason);
+            }
+        }
+        else if (x !== null && (typeof x === 'object' || typeof x === 'function')) {
+            var then = void 0;
             try {
-                // @ts-ignore
-                var then = x.then;
-                // 如果then是一个方法，把x当作this来调用它， 第一个参数为 resolvePromise，第二个参数为rejectPromise
-                if (typeof then === 'function') {
+                then = x.then;
+            }
+            catch (e) {
+                return reject === null || reject === void 0 ? void 0 : reject(e);
+            }
+            // 如果then是一个方法，把x当作this来调用它， 第一个参数为 resolvePromise，第二个参数为rejectPromise
+            if (typeof then === 'function') {
+                try {
                     then.call(x, function (y) {
                         // 如果resolvePromise和 rejectPromise都被调用，或者对同一个参数进行多次调用，第一次调用执行，任何进一步的调用都被忽略
                         if (called)
                             return;
                         called = true;
-                        return resolvePromise(promise, y, resolve, reject);
+                        _this.resolvePromise(promise, y, resolve, reject);
                     }, function (r) {
                         // 如果resolvePromise和 rejectPromise都被调用，或者对同一个参数进行多次调用，第一次调用执行，任何进一步的调用都被忽略
                         if (called)
                             return;
                         called = true;
-                        reject(r);
+                        reject === null || reject === void 0 ? void 0 : reject(r);
                     });
                 }
-                else {
-                    // 如果then不是一个函数，用x完成(fulfill)
-                    resolve(x);
+                catch (e) {
+                    // 如果resolvePromise或 rejectPromise已被调用，忽略。
+                    if (called)
+                        return;
+                    called = true;
+                    reject === null || reject === void 0 ? void 0 : reject(e);
                 }
             }
-            catch (e) {
-                // 如果resolvePromise或 rejectPromise已被调用，忽略。
-                if (called)
-                    return;
-                called = true;
-                reject(e);
+            else {
+                // 如果then不是一个函数，用x完成(fulfill)
+                // @ts-ignore
+                resolve === null || resolve === void 0 ? void 0 : resolve(x);
             }
         }
         else {
-            resolve(x);
+            // @ts-ignore
+            resolve === null || resolve === void 0 ? void 0 : resolve(x);
         }
-    }
-}
+    };
+    return PromiseByMyself;
+}());
 // let promise1 = new PromiseByMyself((resolve, reject) => {
 //   console.log('1')
 //   setTimeout(() => {
@@ -198,9 +213,14 @@ PromiseByMyself.deferred = function () {
     });
     return result;
 };
+// 错误：当x是对象或者function时 x = x.then
+// promise-Aplus-test
 // // 验证静态方法的resolve
 // PromiseByMyself.resolve('name').then((res) => {
 //   console.log(res)
 // })
 // console.log(PromiseByMyself.reject('error'))
 module.exports = PromiseByMyself;
+// let promsie2 = new Promise<'mna'>((resolve, reject) => {
+// })
+// promsie2.then()
