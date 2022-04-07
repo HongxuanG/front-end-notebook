@@ -2,7 +2,7 @@
  * @Author: HongxuanG 
  * @Date: 2022-04-01 16:01:49 
  * @Last Modified by: HongxuanG
- * @Last Modified time: 2022-04-07 14:38:27
+ * @Last Modified time: 2022-04-07 15:16:05
  */
 // 1. 处理执行器抛出的错误
 // 2. 添加异常处理
@@ -50,6 +50,7 @@ class PromiseByMyself<T = unknown> {
     }
     queueMicrotask(() => {
       if (this.status === PromiseStatus.Pending) {
+        console.log('当前的状态是pending')
         this.status = PromiseStatus.Fulfilled
         this.value = value as T
         // 有回调函数被存储起来，就执行
@@ -215,20 +216,18 @@ class PromiseByMyself<T = unknown> {
     }
   }
 }
-// let promise2 = new PromiseByMyself((resolve, reject) => {
-//   resolve('值穿透')
-// })
-// let promise1 = new PromiseByMyself((resolve, reject) => {
-//   console.log('1')
-//   setTimeout(() => {
-//     // 模拟请求是的错误
-//     // throw new Error('执行器发生错误')
-//     resolve?.(promise2)
-//   }, 1000)
-// })
-// promise1.then((value) => {
-//   console.log('继续then下去', value)
-// })
+let promise2 = new PromiseByMyself((resolve, reject) => {
+  resolve('值穿透')
+})
+let promise1 = new PromiseByMyself((resolve, reject) => {
+  console.log('1')
+  resolve?.('鸡哥')
+  console.log('2')
+
+})
+promise1.then((value) => {
+  console.log('继续then下去', value)
+})
 
 
 // @ts-ignore
