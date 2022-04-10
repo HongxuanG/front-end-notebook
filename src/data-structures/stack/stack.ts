@@ -43,8 +43,8 @@ export default class Stack{
     if (this.isEmpty()) {
       return ''
     }
-    let objString = ''
-    for (let i = 0; i <= this.count - 1; i++){
+    let objString = `${this.items[0]}`
+    for (let i = 1; i <= this.count - 1; i++){
       objString = `${objString},${this.items[i]}`
     }
     return objString
