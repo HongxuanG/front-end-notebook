@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "description": "AaronGuo's front-end notebook",
   "main": "index.js",
-  "type":"modules",
+  "type": "modules",
   "scripts": {
     "test": "jest",
-    "testPromise": "promises-aplus-tests src/html-css-js/js/Step5_promise.js",
+    "testPromise": "promises-aplus-tests src/html-css-js/js/promise/Step5_promise.js",
+    "testJigePromise": "promises-aplus-tests src/html-css-js/js/promise/jigePromiseExample.js",
+    "testDazigePromise": "promises-aplus-tests src/html-css-js/js/promise/dazigePromiseExample.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
