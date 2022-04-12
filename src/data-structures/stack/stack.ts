@@ -54,3 +54,4 @@ let stack = new Stack()
 stack.push(22)
 stack.push(333)
 console.log(stack.toString())
+
