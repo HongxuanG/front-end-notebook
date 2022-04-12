@@ -1,12 +1,13 @@
 type StackItems = {
   [Property: number]: any
 }
+
 // 基于javascript的对象的Stack类
-export default class Stack{
+export default class Stack {
   private count: number = 0
   private items: StackItems = {}
   constructor() {
-    
+
   }
   push(element: any) {
     this.items[this.count] = element
@@ -33,8 +34,8 @@ export default class Stack{
     this.count = 0
   }
   peek() {
-    if(this.isEmpty())return undefined
-    return this.items[this.count-1]
+    if (this.isEmpty()) return undefined
+    return this.items[this.count - 1]
   }
   size() {
     return this.count
@@ -44,13 +45,12 @@ export default class Stack{
       return ''
     }
     let objString = `${this.items[0]}`
-    for (let i = 1; i <= this.count - 1; i++){
+    for (let i = 1; i <= this.count - 1; i++) {
       objString = `${objString},${this.items[i]}`
     }
     return objString
   }
 }
 let stack = new Stack()
-stack.push(22)
-stack.push(333)
-console.log(stack.toString())
+console.log(Object.getOwnPropertyNames(stack))
+console.log(Object.keys(stack))
