@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>vue-demo</title>
+    <script src="https://unpkg.com/vue@next"></script>
+  </head>
+  <body>
+    <div id="counter">
+      <p>Counter: {{counter}}</p>
+      <button v-on:click="stop">停止计时</button>
+      <p>{{message}}</p>
+      <input type="text" v-model="message"/>
+    </div>
+    
+    <script>
+      const Counter = {
+        data() {
+          return {
+            counter: 1,
+            message: 'hello input'
+          }
+        },
+        methods: {
+          stop() {
+            console.log(111)
+            clearInterval(this.timer)
+          },
+        },
+        mounted() {
+          this.stop()
+          this.timer = setInterval(() => {
+            this.counter++
+          }, 1000)
+        },
+      }
+      Vue.createApp(Counter).mount('#counter')
+    </script>
+  </body>
+</html>

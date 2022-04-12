@@ -29,6 +29,8 @@ interface Executor<T> {
 class PromiseByMyself<T = unknown> {
   constructor(executor: Executor<T>) {
     try {
+      // new 做的第一件事是：立即执行 new Promise的参数: (resolve, reject)=>{...}
+      // 而resolve和reject是一个方法 
       executor(this.resolve, this.reject)
     } catch (error: any) {
       this.reject(error)
