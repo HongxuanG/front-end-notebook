@@ -4,50 +4,42 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>圣杯布局-flex</title>
+    <title>双飞燕布局-flex</title>
     <style>
-      html {
-        width: 100%;
-        height: 100%;
-      }
       body {
-        margin: 0;
         padding: 0;
-        height: 100%;
-      }
-      .header,
-      .footer {
-        height: 40px;
-        width: 100%;
-        background-color: red;
+        margin: 0;
       }
       .container {
-        width: 100%;
-        height: calc(100% - 80px);
         display: flex;
-        flex-flow: row nowrap;
+        width: 100%;
+        height: 150px;
+        background-color: aqua;
+        text-align: center;
+        line-height: 150px;
       }
       .left,
       .right {
-        height: 100%;
         width: 150px;
-        background-color: aquamarine;
+        height: 150px;
+        background-color: blanchedalmond;
         text-align: center;
+        line-height: 150px;
       }
       .center {
-        height: 100%;
         flex: 1 1 auto;
-        background-color: burlywood;
+        height: 150px;
+        background-color: blue;
+        text-align: center;
+        line-height: 150px;
       }
     </style>
   </head>
   <body>
-    <div class="header">header</div>
     <div class="container">
       <div class="left">left</div>
       <div class="center">center</div>
       <div class="right">right</div>
     </div>
-    <div class="footer">footer</div>
   </body>
 </html>

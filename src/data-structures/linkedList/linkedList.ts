@@ -4,9 +4,9 @@ import { Node } from './linked-list-models';
 // 有指针，指向头节点 节点有数据域和指针域
 // 可以随意插入任意一个地方
 export default class LinkedList<T>{
-  count: number = 0
-  head!: Node<T>
-  equalFn: Function = defaultEquals
+  protected count = 0
+  protected head?: Node<T>
+  protected equalFn: Function = defaultEquals
   constructor(equalFn: Function = defaultEquals) {
     this.equalFn = equalFn
   }
@@ -19,7 +19,7 @@ export default class LinkedList<T>{
     } else {
       current = this.head
       // 循环查找表尾
-      while (current != null) {
+      while (current.next != null) {
         current = current.next as Node<T>
       }
       // 最后面的node的next指向新节点node
@@ -28,18 +28,34 @@ export default class LinkedList<T>{
     // 表长加一
     this.count++
   }
-  // 从链表的特定位置插入一个新元素
-  insert(element: T, position: number) {
-
+  // 从链表的特定位置插入一个新元素 返回布尔值 true | false
+  insert(element: T, index: number) {
+    if (index >= 0 && index <= this.count) {
+      const node = new Node(element)
+      if (index === 0) {
+        const current = this.head
+        node.next = current
+        this.head = node
+      } else {
+        const previous = this.getElementAt(index - 1)
+        const current = (previous as Node<T>).next
+        node.next = current as Node<T>
+        (previous as Node<T>).next = node
+      }
+      this.count++
+      return true
+    }
+    return false
   }
-  // 从特定位置获取元素
+  // 从特定位置获取元素 
+  // TODO: 优化：二分查找法
   getElementAt(index: number) {
     if (index >= 0 && index <= this.count) {
       let node = this.head
-      for (let i = 0; i < index && node != null; i++){
-        node = node.next as Node<T>
+      for (let i = 0; i < index && node != null; i++) {
+        node = node.next
       }
-      return node.element
+      return node
     }
     return undefined
   }
@@ -61,33 +77,41 @@ export default class LinkedList<T>{
   }
   // 返回该元素的索引，没有的返回-1
   indexOf(element: T) {
+    let current = this.head
 
+    for (let i = 0; i < this.count && current != null; i++) {
+      if (this.equalFn(element, current.element)) {
+        return i
+      }
+      current = current.next as Node<T>
+    }
+    return -1
   }
   // 删除特定元素
   removeAt(index: number) {
     // 边界值处理
-    if (index >= 0 && index < this.count) {
+    if (index >= 0 && index <= this.count) {
       let current = this.head
       if (index === 0) {
         // 移除第一个元素 为什么要分开处理index === 0的情况呢，因为index = 0没有上一个元素
-        this.head = current.next as Node<T>
+        this.head = (current as Node<T>).next
       } else {
         let previous!: Node<T>
         // 遍历寻找index位置的元素
-        for (let i = 0; i < index; i++){
-          previous = current
-          current = current.next as Node<T>
+        for (let i = 0; i < index; i++) {
+          previous = current as Node<T>
+          current = (current as Node<T>).next
         }
-        (previous.next as Node<T>) = current.next as Node<T>
+        previous.next = (current as Node<T>).next
       }
       this.count--
-      return current.element
+      return (current as Node<T>).element
     }
     return undefined
   }
   // 链表是否为空
   isEmpty() {
-    return this.head == null
+    return this.size() === 0
   }
   // 返回链表的长度
   size() {
@@ -95,6 +119,18 @@ export default class LinkedList<T>{
   }
   // 序列化
   toString() {
-
+    if (this.isEmpty()) return ''
+    let objString = `${this.head?.element}`
+    let current = this.head?.next
+    for (let i = 1; i < this.count && current != null; i++) {
+      objString += `,${current.element}`
+      current = current.next
+    }
+    return objString
   }
 }
+let linkedList = new LinkedList()
+linkedList.push(1)
+linkedList.push(2)
+linkedList.push(3)
+console.log(linkedList.toString())
