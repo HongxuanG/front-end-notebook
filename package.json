@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "AaronGuo's front-end notebook",
   "main": "index.js",
-  "type": "modules",
   "scripts": {
     "test": "jest",
     "testPromise": "promises-aplus-tests src/html-css-js/js/promise/Step5_promise.js",

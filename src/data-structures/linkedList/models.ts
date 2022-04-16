@@ -1,3 +1,4 @@
+// 链表的结点数据结构
 export class Node<T> {
   element!: T
   next?: Node<T>
@@ -6,6 +7,7 @@ export class Node<T> {
     this.next = next
   }
 }
+// 双向链表节点的数据结构
 export class DoublyNode<T> extends Node<T>{
   next?: DoublyNode<T>
   prev?: DoublyNode<T>
