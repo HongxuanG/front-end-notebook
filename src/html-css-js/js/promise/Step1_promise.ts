@@ -3,7 +3,7 @@ namespace Step1{
   enum PromiseStatus {
     Pending = 'pending',
     Fulfilled = 'fulfilled',
-    Rejected = 'rejected'
+    Rejected = 'rejected',
   }
   interface Executor {
     (resolve: Function, reject?: Function): void
@@ -13,6 +13,7 @@ namespace Step1{
       console.log('constructor', this)
       executor(this.resolve, this.reject)
     }
+
     status = PromiseStatus.Pending
     value: unknown = null
     reason: unknown = null
@@ -23,29 +24,32 @@ namespace Step1{
         this.value = value
       }
     }
-    reject = (reason: unknown) => {  // 使用箭头函数定义而不是普通函数定义，因为里面的this会指向window或者undefined
+
+    reject = (reason: unknown) => { // 使用箭头函数定义而不是普通函数定义，因为里面的this会指向window或者undefined
       if (this.status === PromiseStatus.Pending) {
         this.status = PromiseStatus.Rejected
         this.reason = reason
       }
     }
+
     then(onFulilled: Function, onRejected?: Function) { // 使用箭头函数定义而不是普通函数定义，因为里面的this会指向window或者undefined
       if (this.status === PromiseStatus.Fulfilled) {
         onFulilled(this.value)
-      } else if (this.status === PromiseStatus.Rejected) {
+      }
+      else if (this.status === PromiseStatus.Rejected) {
         onRejected && onRejected(this.reason)
       }
     }
   }
   // 没有触发
-  let promise = new PromiseByMyself((resolve, rejects) => {
+  const promise = new PromiseByMyself((resolve, rejects) => {
     setTimeout(() => {
       resolve('success') // 异步执行 then都跑完了才改变状态
     }, 2000)
   })
-  promise.then(function (res: unknown) {
+  promise.then((res: unknown) => {
     console.log(res)
-  }, function (reason: unknown) {
+  }, (reason: unknown) => {
     console.log(reason)
   })
 }

@@ -7,8 +7,12 @@ function decimalToBinary(decNumber: number) {
   let number = decNumber
   let rem
   let binaryString = ''
-  if (decNumber == 0) return '00'
-  if (decNumber == 1) return '01'
+  if (decNumber === 0) {
+    return '00'
+  }
+  if (decNumber === 1) {
+    return '01'
+  }
   // number == 0 不进入
   while (number > 0) {
     rem = Math.floor(number % 2)
@@ -18,16 +22,15 @@ function decimalToBinary(decNumber: number) {
   while (!remStack.isEmpty()) {
     binaryString += remStack.pop().toString()
   }
+
   return binaryString
 }
 // 大于或大于等于
 type EqualOrGreaterThan<
   T extends number,
   U extends number,
-  UseEqual extends boolean = false
-  > = EqualGreaterThanHelper<T, U, UseEqual>
-
-
+  UseEqual extends boolean = false,
+> = EqualGreaterThanHelper<T, U, UseEqual>
 
 type EqualGreaterThanHelper<
   T extends number,
@@ -35,20 +38,19 @@ type EqualGreaterThanHelper<
   UseEqual extends boolean,
   CountArr extends unknown[] = []> =
   T extends U
-  ? UseEqual
-  : CountArr['length'] extends T
-  ? false
-  : CountArr['length'] extends U
-  ? true
-  : EqualGreaterThanHelper<T, U, UseEqual, [...CountArr, unknown]>
-
+    ? UseEqual
+    : CountArr['length'] extends T
+      ? false
+      : CountArr['length'] extends U
+        ? true
+        : EqualGreaterThanHelper<T, U, UseEqual, [...CountArr, unknown]>
 
 // 小于或小于等于
 type EqualOrLessthan<
   T extends number,
   U extends number,
-  UseEqual extends boolean = false
-  > = EqualLessthanHelper<T, U, UseEqual>
+  UseEqual extends boolean = false,
+> = EqualLessthanHelper<T, U, UseEqual>
 
 type EqualLessthanHelper<
   T extends number,
@@ -56,12 +58,12 @@ type EqualLessthanHelper<
   UseEqual extends boolean,
   CountArr extends unknown[] = []> =
   T extends U
-  ? UseEqual
-  : CountArr['length'] extends T
-  ? true
-  : CountArr['length'] extends U
-  ? false
-  : EqualLessthanHelper<T, U, UseEqual, [...CountArr, unknown]>
+    ? UseEqual
+    : CountArr['length'] extends T
+      ? true
+      : CountArr['length'] extends U
+        ? false
+        : EqualLessthanHelper<T, U, UseEqual, [...CountArr, unknown]>
 // 求数值范围
 type Range<L extends number, H extends number> = RangeHelper<L, H>
 type RangeHelper<
@@ -70,10 +72,10 @@ type RangeHelper<
   Result extends number[] = [],
   CountArr extends unknown[] = []> =
   EqualOrGreaterThan<CountArr['length'], L, true> extends true
-  ? EqualOrLessthan<CountArr['length'], H, true> extends true
-  ? RangeHelper<L, H, [...Result, CountArr['length']], [...CountArr, unknown]>
-  : Result[number]
-  : RangeHelper<L, H, Result, [...CountArr, unknown]>
+    ? EqualOrLessthan<CountArr['length'], H, true> extends true
+      ? RangeHelper<L, H, [...Result, CountArr['length']], [...CountArr, unknown]>
+      : Result[number]
+    : RangeHelper<L, H, Result, [...CountArr, unknown]>
 
 type BaseRange = Range<2, 36> // 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 // decimal 转 任何进制数
@@ -81,9 +83,11 @@ function baseConverter(decNumber: number, base: BaseRange) {
   const remStack = new Stack()
   const dights = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
   let number = decNumber
-  let baseString = ''  // 最终结果
-  let rem   // 余数
-  if (!(base >= 2 && base <= 36)) return baseString
+  let baseString = '' // 最终结果
+  let rem // 余数
+  if (!(base >= 2 && base <= 36)) {
+    return baseString
+  }
   while (number > 0) {
     rem = number % base
     remStack.push(rem)
@@ -92,6 +96,7 @@ function baseConverter(decNumber: number, base: BaseRange) {
   while (!remStack.isEmpty()) {
     baseString += dights[remStack.pop()]
   }
+
   return baseString
 }
-console.log('5的二进制', baseConverter(100345 , 35))
+console.log('5的二进制', baseConverter(100345, 35))

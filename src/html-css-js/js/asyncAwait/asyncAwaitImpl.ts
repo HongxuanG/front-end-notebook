@@ -1,5 +1,4 @@
 
-
 function fn1(num: number) {
   return new Promise<number>((resolve, reject) => {
     setTimeout(() => {
@@ -10,11 +9,11 @@ function fn1(num: number) {
 // yield 用于接收next传进来的参数
 // 这里fn1返回的是一个pending状态的promise 模拟异步请求
 function* gen1() {
-  // @ts-ignore
+  // @ts-expect-error
   const num1 = yield fn1(1)
-  // @ts-ignore
+  // @ts-expect-error
   const num2 = yield fn1(num1)
-  // @ts-ignore
+  // @ts-expect-error
   const num3 = yield fn1(num2)
   return num3
 }
@@ -22,8 +21,8 @@ function* gen1() {
 // 取出promise的resolve的参数类型
 type PromiseResolveValue<T> = T extends PromiseLike<infer V> ? V : T
 function generatorToAsync1(generatorFun: GeneratorFunction) {
-  return function (this: void, ...args: any[]) {
-    let that = this
+  return function(this: void, ...args: any[]) {
+    const that = this
     const gen = generatorFun.apply(that, args)
     return new Promise((resolve, reject) => {
       // 用递归解决了不断调用next的问题，done 为true 就是递归的终止条件
@@ -31,17 +30,18 @@ function generatorToAsync1(generatorFun: GeneratorFunction) {
         let res
         try {
           res = gen[key](arg)
-
-        } catch (e) {
+        }
+        catch (e) {
           reject(e)
         }
         const { value, done } = res as IteratorResult<T>
         if (done) {
           return resolve(value)
-        } else {
+        }
+        else {
           // 这里为什么不直接value.then(....)而是要Promise.resolve(value).then(....)呢？
           // 因为value是pending的promise实例的话这种写法当然可以啦，但是value有可能不是一个promise实例哦
-          // @ts-ignore
+          // @ts-expect-error
           return Promise.resolve(value).then(val => next('next', val), reason => next('throw', reason))
         }
       }
@@ -49,6 +49,6 @@ function generatorToAsync1(generatorFun: GeneratorFunction) {
     })
   }
 }
-// @ts-ignore
+// @ts-expect-error
 const asyncFun = generatorToAsync1(gen1)
 asyncFun().then(res => console.log(res))

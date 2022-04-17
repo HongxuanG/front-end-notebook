@@ -1,6 +1,6 @@
 /*
- * @Author: HongxuanG 
- * @Date: 2022-04-01 16:01:49 
+ * @Author: HongxuanG
+ * @Date: 2022-04-01 16:01:49
  * @Last Modified by: HongxuanG
  * @Last Modified time: 2022-04-07 15:16:05
  */
@@ -11,7 +11,7 @@
 enum PromiseStatus {
   Pending = 'pending',
   Fulfilled = 'fulfilled',
-  Rejected = 'rejected'
+  Rejected = 'rejected',
 }
 type IResolve<T> = (value?: T | PromiseLike<T>) => void
 type IReject = (reason?: any) => void
@@ -30,14 +30,16 @@ class PromiseByMyself<T = unknown> {
   constructor(executor: Executor<T>) {
     try {
       // new 做的第一件事是：立即执行 new Promise的参数: (resolve, reject)=>{...}
-      // 而resolve和reject是一个方法 
+      // 而resolve和reject是一个方法
       executor(this.resolve, this.reject)
-    } catch (error: any) {
+    }
+    catch (error: any) {
       this.reject(error)
     }
   }
+
   private status = PromiseStatus.Pending
-  private value!: T     // !: 是不初始化，但是不报错的意思
+  private value!: T // !: 是不初始化，但是不报错的意思
   private reason: any = null
   // 储存被异步函数耽误的Fulfilled状态的then里面的Fulfilled回调函数
   private onFulfilledCallbacks: IResolve<T>[] = []
@@ -62,8 +64,9 @@ class PromiseByMyself<T = unknown> {
       }
     })
   }
+
   // 拒绝
-  private reject: IReject = (reason) => {  // 使用箭头函数定义而不是普通函数定义，因为使用普通函数的话里面的this会指向window或者undefined
+  private reject: IReject = (reason) => { // 使用箭头函数定义而不是普通函数定义，因为使用普通函数的话里面的this会指向window或者undefined
     queueMicrotask(() => {
       if (this.status === PromiseStatus.Pending) {
         this.status = PromiseStatus.Rejected
@@ -74,6 +77,7 @@ class PromiseByMyself<T = unknown> {
       }
     })
   }
+
   /**
    * 静态方法的resolve
    * @param value 值
@@ -82,12 +86,14 @@ class PromiseByMyself<T = unknown> {
   static resolve<T>(value?: T | PromiseLike<T>): PromiseByMyself<T> {
     if (value instanceof PromiseByMyself) {
       return value
-    } else {
+    }
+    else {
       return new PromiseByMyself((resolve) => {
         resolve?.(value)
       })
     }
   }
+
   /**
    * 静态方法的reject
    * @param reason 拒绝的理由
@@ -98,6 +104,7 @@ class PromiseByMyself<T = unknown> {
       reject?.(reason)
     })
   }
+
   /**
    * 可以链式调用
    * @param onFulfilled 成功状态后执行的函数
@@ -106,83 +113,91 @@ class PromiseByMyself<T = unknown> {
    */
   then = <TResult1 = T, TResult2 = never>(
     onFulfilled?: onFulfilled<T, TResult1>,
-    onRejected?: onRejected<TResult2>
+    onRejected?: onRejected<TResult2>,
   ) => { // 使用箭头函数定义而不是普通函数定义，因为使用普通函数的话里面的this会指向window或者undefined
-    let onFulfilledFunc = typeof onFulfilled === 'function' ? onFulfilled : (value: any) => value
-    let onRejectedFunc = typeof onRejected === 'function' ? onRejected : (reason: unknown) => { throw reason }
+    const onFulfilledFunc = typeof onFulfilled === 'function' ? onFulfilled : (value: any) => value
+    const onRejectedFunc = typeof onRejected === 'function'
+      ? onRejected
+      : (reason: unknown) => {
+        throw reason
+      }
 
-    let promise2 = new PromiseByMyself<TResult1 | TResult2>((resolve, reject) => {
-      let fulfilledMicrotask = () => {
+    const promise2 = new PromiseByMyself<TResult1 | TResult2>((resolve, reject) => {
+      const fulfilledMicrotask = () => {
         // 等待promise被初始化完成，解决方案是通过微任务queueMicrotask延迟执行
         queueMicrotask(() => {
           try {
             // 处理onFulfilled的返回值类型，如果是promise类型.then 如果不是promise类型resolve()
-            let x = onFulfilledFunc(this.value)
+            const x = onFulfilledFunc(this.value)
             this.resolvePromise(promise2, x, resolve, reject)
-          } catch (error) {
+          }
+          catch (error) {
             reject && reject(error)
           }
-
         })
       }
-      let rejectedMicrotask = () => {
+      const rejectedMicrotask = () => {
         // 等待promise被初始化完成，解决方案是通过微任务queueMicrotask延迟执行
         queueMicrotask(() => {
           try {
             // 处理onFulfilled的返回值类型，如果是promise类型.then 如果不是promise类型resolve()
-            let x = onRejectedFunc(this.reason)
+            const x = onRejectedFunc(this.reason)
             this.resolvePromise(promise2, x, resolve, reject)
-          } catch (error) {
+          }
+          catch (error) {
             reject && reject(error)
           }
-
         })
       }
 
       if (this.status === PromiseStatus.Fulfilled) {
         // 等待promise被初始化完成，解决方案是通过微任务queueMicrotask延迟执行
         fulfilledMicrotask()
-      } else if (this.status === PromiseStatus.Rejected) {
+      }
+      else if (this.status === PromiseStatus.Rejected) {
         rejectedMicrotask()
-      } else if (this.status === PromiseStatus.Pending) { // 还是pending 储存回调函数，等到resolve或者reject的时候才用上这些回调函数
-
+      }
+      else if (this.status === PromiseStatus.Pending) { // 还是pending 储存回调函数，等到resolve或者reject的时候才用上这些回调函数
         this.onFulfilledCallbacks.push(fulfilledMicrotask)
         this.onRejectedCallbacks.push(rejectedMicrotask)
       }
-    });
+    })
     return promise2
   }
+
   // 这里是处理分析then的第一个参数(onFulfilledFunc)return 的东西，第二个参数(onRejectedFunc)的东西
   private resolvePromise = <T>(
     promise: PromiseByMyself<T>,
     x: T | PromiseLike<T>,
     resolve?: IResolve<T>,
-    reject?: IReject
+    reject?: IReject,
   ) => {
     let called = false
     // 如果promise和x引用同一个对象，则用TypeError作为原因拒绝（reject）promise。
     if (promise === x) {
       return reject?.(new TypeError('不能调用自身, 你懂不懂promise啊!'))
     }
+
     // 如果x是一个promise,采用promise的状态
     if (x instanceof PromiseByMyself) {
-
       if (x.status === PromiseStatus.Pending) {
-        x.then(y => {
+        x.then((y) => {
           this.resolvePromise(promise, y, resolve, reject)
         }, reject)
-      } else if (x.status === PromiseStatus.Fulfilled) {
+      }
+      else if (x.status === PromiseStatus.Fulfilled) {
         resolve?.(x.value)
-      } else if (x.status === PromiseStatus.Rejected) {
+      }
+      else if (x.status === PromiseStatus.Rejected) {
         reject?.(x.reason)
       }
-    } else if (x !== null && (typeof x === 'object' || typeof x === 'function')) {
+    }
+    else if (x !== null && (typeof x === 'object' || typeof x === 'function')) {
       let then: PromiseLike<T>['then']
       try {
         then = (x as PromiseLike<T>).then
-
-      } catch (e) {
-
+      }
+      catch (e) {
         return reject?.(e)
       }
       // 如果then是一个方法，把x当作this来调用它， 第一个参数为 resolvePromise，第二个参数为rejectPromise
@@ -190,56 +205,61 @@ class PromiseByMyself<T = unknown> {
         try {
           then.call(x, (y) => {
             // 如果resolvePromise和 rejectPromise都被调用，或者对同一个参数进行多次调用，第一次调用执行，任何进一步的调用都被忽略
-            if (called) return
+            if (called) {
+              return
+            }
             called = true
             this.resolvePromise(promise, y, resolve, reject)
           }, (r: unknown) => {
             // 如果resolvePromise和 rejectPromise都被调用，或者对同一个参数进行多次调用，第一次调用执行，任何进一步的调用都被忽略
-            if (called) return
+            if (called) {
+              return
+            }
             called = true
             reject?.(r)
           })
-        } catch (e) {
+        }
+        catch (e) {
           // 如果resolvePromise或 rejectPromise已被调用，忽略。
-          if (called) return
+          if (called) {
+            return
+          }
           called = true
           reject?.(e)
-
         }
-
-      } else {
+      }
+      else {
         // 如果then不是一个函数，用x完成(fulfill)
-        // @ts-ignore
+        // @ts-expect-error
         resolve?.(x)
       }
-    } else {
-      // @ts-ignore
+    }
+    else {
+      // @ts-expect-error
       resolve?.(x)
     }
   }
 }
-let promise2 = new PromiseByMyself((resolve, reject) => {
+const promise2 = new PromiseByMyself((resolve, reject) => {
   resolve('值穿透')
 })
-let promise1 = new PromiseByMyself((resolve, reject) => {
+const promise1 = new PromiseByMyself((resolve, reject) => {
   console.log('1')
   resolve?.('鸡哥')
   console.log('2')
-
 })
 promise1.then((value) => {
   console.log('继续then下去', value)
 })
 
-
-// @ts-ignore
-PromiseByMyself.deferred = function () {
-  let result = {}
-  // @ts-ignore
+// @ts-expect-error
+PromiseByMyself.deferred = function() {
+  const result = {}
+  // @ts-expect-error
   result.promise = new PromiseByMyself((resolve, reject) => {
-    // @ts-ignore
+    // @ts-expect-error
     result.resolve = resolve
-    // @ts-ignore
+    // @ts-expect-error
     result.reject = reject
   })
   return result
@@ -253,8 +273,6 @@ PromiseByMyself.deferred = function () {
 // })
 // console.log(PromiseByMyself.reject('error'))
 module.exports = PromiseByMyself
-
-
 
 // resolve值穿透实例
 // let promise1 = new Promise((resolve, reject) => {

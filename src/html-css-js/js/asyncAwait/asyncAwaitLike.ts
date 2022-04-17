@@ -7,11 +7,11 @@ function fn(num: number) {
   })
 }
 function* gen() {
-  // @ts-ignore
+  // @ts-expect-error
   const num1 = yield fn(1)
-  // @ts-ignore
+  // @ts-expect-error
   const num2 = yield fn(num1)
-  // @ts-ignore
+  // @ts-expect-error
   const num3 = yield fn(num2)
   return num3
 }
@@ -38,7 +38,7 @@ function* gen() {
 // })
 type PromiseValue<> = Promise<'name'>
 function generatorToAsync(generatorFun: GeneratorFunction) {
-  return function () {
+  return function() {
     return new Promise((resolve, reject) => {
       const g = generatorFun()
       const next1 = g.next()
@@ -55,6 +55,6 @@ function generatorToAsync(generatorFun: GeneratorFunction) {
   }
 }
 const asyncFn = generatorToAsync(gen as GeneratorFunction)
-asyncFn().then(res => {
-  console.log(res);
+asyncFn().then((res) => {
+  console.log(res)
 })

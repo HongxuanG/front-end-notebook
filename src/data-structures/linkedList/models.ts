@@ -8,7 +8,7 @@ export class Node<T> {
   }
 }
 // 双向链表节点的数据结构
-export class DoublyNode<T> extends Node<T>{
+export class DoublyNode<T> extends Node<T> {
   next?: DoublyNode<T>
   prev?: DoublyNode<T>
   constructor(element: T, next?: DoublyNode<T>, prev?: DoublyNode<T>) {

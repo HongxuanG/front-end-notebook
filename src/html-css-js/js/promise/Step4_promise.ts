@@ -1,6 +1,6 @@
 /*
- * @Author: HongxuanG 
- * @Date: 2022-04-01 16:01:49 
+ * @Author: HongxuanG
+ * @Date: 2022-04-01 16:01:49
  * @Last Modified by: HongxuanG
  * @Last Modified time: 2022-04-02 11:37:25
  */
@@ -9,7 +9,7 @@ namespace Step4 {
   enum PromiseStatus {
     Pending = 'pending',
     Fulfilled = 'fulfilled',
-    Rejected = 'rejected'
+    Rejected = 'rejected',
   }
   interface Executor {
     (resolve: (arg: unknown) => void, reject?: (arg: unknown) => void): void
@@ -21,6 +21,7 @@ namespace Step4 {
     constructor(executor: Executor) {
       executor(this.resolve, this.reject)
     }
+
     status = PromiseStatus.Pending
     value: unknown = null
     reason: unknown = null
@@ -39,8 +40,9 @@ namespace Step4 {
         }
       }
     }
+
     // 拒绝
-    reject = (reason: unknown) => {  // 使用箭头函数定义而不是普通函数定义，因为使用普通函数的话里面的this会指向window或者undefined
+    reject = (reason: unknown) => { // 使用箭头函数定义而不是普通函数定义，因为使用普通函数的话里面的this会指向window或者undefined
       if (this.status === PromiseStatus.Pending) {
         this.status = PromiseStatus.Rejected
         this.reason = reason
@@ -49,20 +51,22 @@ namespace Step4 {
         }
       }
     }
+
     then(onFulfilled: IThenCallback, onRejected?: IThenCallback) { // 使用箭头函数定义而不是普通函数定义，因为使用普通函数的话里面的this会指向window或者undefined
-      let promise = new PromiseByMyself((resolve, reject) => {
+      const promise = new PromiseByMyself((resolve, reject) => {
         if (this.status === PromiseStatus.Fulfilled) {
           // 等待promise被初始化完成，解决方案是通过微任务queueMicrotask延迟执行
           queueMicrotask(() => {
             // 处理onFulfilled的返回值类型，如果是promise类型.then 如果不是promise类型resolve()
-            let returnBody = onFulfilled(this.value)
+            const returnBody = onFulfilled(this.value)
 
             resolvePromise(promise, returnBody, resolve, reject)
           })
-        } else if (this.status === PromiseStatus.Rejected) {
+        }
+        else if (this.status === PromiseStatus.Rejected) {
           onRejected && onRejected(this.reason)
-        } else if (this.status === PromiseStatus.Pending) { // 还是pending 储存回调函数，等到resolve或者reject的时候才用上这些回调函数
-
+        }
+        else if (this.status === PromiseStatus.Pending) { // 还是pending 储存回调函数，等到resolve或者reject的时候才用上这些回调函数
           this.onFulfilledCallbacks.push(onFulfilled)
           // 可选
           onRejected && this.onRejectedCallbacks.push(onRejected)
@@ -76,29 +80,30 @@ namespace Step4 {
       if (promise === x) {
         return reject ? reject(new TypeError('不能调用自身, 你懂不懂promise啊!')) : new TypeError('不能调用自身, 你懂不懂promise啊!')
       }
+
       x.then(resolve, reject)
-    } else {
+    }
+    else {
       resolve(x)
     }
   }
   // 没有触发
-  let promise = new PromiseByMyself((resolve) => {
+  const promise = new PromiseByMyself((resolve) => {
     resolve('success')
   })
-  const cature1 = promise.then(function (res: unknown) {
-    console.log(1);
+  const cature1 = promise.then((res: unknown) => {
+    console.log(1)
     console.log(res)
     return cature1
   })
   // TypeError: 不能调用自身, 你懂不懂promise啊!
   // good job！这就完成了报错了，通过queueMicrotask获取到已初始化的promise，然后传到resolvePromise里面
-  cature1.then(function (res: unknown) {
-    console.log(2);
+  cature1.then((res: unknown) => {
+    console.log(2)
     console.log(res) // 2秒过后 output: 11
-  }, function (reason) {
+  }, (reason) => {
     console.log('then的回调函数return的是自身')
     console.log(reason)
   })
 
 }
-
