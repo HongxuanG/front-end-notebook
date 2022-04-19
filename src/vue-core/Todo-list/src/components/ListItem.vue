@@ -1,21 +1,25 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 interface ListItem {
-  todoEvent: string;
-  isFinish: boolean;
+  todoEvent: string
+  isFinish: boolean
 }
-defineProps<ListItem>()
+let { todoEvent, isFinish } = defineProps<ListItem>()
+function oncheck() {
+  isFinish = !isFinish
+}
 </script>
 
 <template>
   <div class="list-item">
-    <div :class="['list--item_eventName', isFinish ? 'list-item_isFinish' : '']">{{todoEvent}}</div>
+    <div :class="['checkbox', isFinish ? 'checkbox_checked' : '']" @click="oncheck"></div>
+    <div :class="['list--item_eventName', isFinish ? 'list-item_isFinish' : '']">{{ todoEvent }}</div>
   </div>
 </template>
 
 <style scoped>
-.list-item{
+.list-item {
   display: flex;
-  justify-content: space-between;
+  justify-content: left;
   align-items: center;
   padding: 20px;
   background-color: bisque;
@@ -23,7 +27,22 @@ defineProps<ListItem>()
   color: #333;
   font-size: 20px;
 }
-.list-item_isFinish{
+.checkbox {
+  box-sizing: border-box;
+  width: 30px;
+  height: 30px;
+  background-color: #fff;
+  border-radius: 50%;
+  border: 1px solid #d2d2d2;
+  margin-right: 20px;
+  cursor: pointer;
+}
+.checkbox_checked::after {
+  content: '';
+  display: block;
+  background-color: chartreuse;
+}
+.list-item_isFinish {
   text-decoration: line-through;
   font-style: italic;
 }
