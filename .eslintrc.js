@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['@aaronghx/eslint-config-ts'],
+  // extends: ['@aaronghx/eslint-config-ts'],
   rules: {
     'no-console': 'off',
     'curly': ['error', 'all'],

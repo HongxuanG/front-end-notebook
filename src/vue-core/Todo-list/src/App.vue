@@ -1,19 +1,21 @@
 <script setup lang="ts">
-import {useRouter} from 'vue-router'
+import { useRouter } from 'vue-router'
 import ListItem from './components/ListItem.vue'
 import List from './components/List.vue'
+import Effect from './components/Effect.vue'
 const router = useRouter()
-function goEdit(){
+function goEdit() {
   router.push('/edit')
 }
-function goAdd(){
+function goAdd() {
   router.push('/add')
 }
 </script>
 
 <template>
+  <Effect></Effect>
   <h1>To Do List</h1>
-  
+
   <div class="to-do-list">
     <button type="button" @click="goEdit">Edit</button>
     <button type="button" @click="goAdd">Add</button>
