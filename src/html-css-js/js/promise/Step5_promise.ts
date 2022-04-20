@@ -45,7 +45,7 @@ class PromiseByMyself<T = unknown> {
   private onFulfilledCallbacks: IResolve<T>[] = []
   // 储存被异步函数耽误的Rejected状态的then里面的Rejected回调函数
   private onRejectedCallbacks: IReject[] = []
-  // 解决
+  // 解决：改变status状态并逐个执行 onFulfilledCallbacks（then方法）
   private resolve: IResolve<T> = (value) => {
     if (isPromise(value)) {
       // 实现resolve(promise) 最后输出promise的resolve这样的一个值穿透
@@ -65,7 +65,7 @@ class PromiseByMyself<T = unknown> {
     })
   }
 
-  // 拒绝
+  // 拒绝：存储拒绝缘由，改变status状态并逐个执行onRejectedCallbacks（catch方法）
   private reject: IReject = (reason) => { // 使用箭头函数定义而不是普通函数定义，因为使用普通函数的话里面的this会指向window或者undefined
     queueMicrotask(() => {
       if (this.status === PromiseStatus.Pending) {
@@ -230,12 +230,10 @@ class PromiseByMyself<T = unknown> {
       }
       else {
         // 如果then不是一个函数，用x完成(fulfill)
-        // @ts-expect-error
         resolve?.(x)
       }
     }
     else {
-      // @ts-expect-error
       resolve?.(x)
     }
   }
