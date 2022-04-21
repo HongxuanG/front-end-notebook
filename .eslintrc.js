@@ -4,6 +4,6 @@ module.exports = {
     'no-console': 'off',
     'curly': ['error', 'all'],
     'brace-style': ['error', 'stroustrup'],
-
+    'parser': 'babel-eslint'
   },
 }

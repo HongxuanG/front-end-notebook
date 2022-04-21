@@ -64,4 +64,65 @@ export default class Set<T> {
 
     return objString
   }
+
+  // 并集
+  union(otherSet: Set<T>) {
+    const unionSet = new Set()
+    this.values().forEach((value, index) => unionSet.add(index + '', value))
+    otherSet.values().forEach((value) => unionSet.add(unionSet.size() + 1 + '', value))
+    return unionSet
+  }
+
+  // 交集
+  intersection(otherSet: Set<T>) {
+    const intersectionSet = new Set()
+    const values = this.values()
+    // for(let i = 0;i<values.length;i++){
+    //   if(otherSet.has(i+'')){
+    //     intersectionSet.add(i+'', values[i])
+    //   }
+    // }
+    // return intersectionSet
+    // 改进方法，上述的方法存在大量的性能开销，最坏的可能是循环长度最长的那个Set找出相同的元素
+    // 我们可以只循环长度最短的那个Set同样能找出相同的元素
+    const otherValues = otherSet.values()
+    let biggerSet = values
+    let smallerSet = otherValues
+    if (otherValues.length - values.length > 0) {
+      biggerSet = otherValues
+      smallerSet = values
+    }
+    for (let i = 0; i < smallerSet.length; i++) {
+      if (biggerSet.includes(smallerSet[i])) {
+        intersectionSet.add(i + '', smallerSet[i])
+      }
+    }
+    return intersectionSet
+  }
+
+  // 差集
+  different(otherSet: Set<T>) {
+    const differentSet = new Set()
+    this.values().forEach((value, index) => {
+      if (!otherSet.has(index + '')) {
+        differentSet.add(index + '', value)
+      }
+    })
+  }
+
+  // 子集
+  inSubsetOf(otherSet: Set<T>): boolean{
+    // 如果当前的集合比otherSet的集合要大，那就不是子集了
+    if(this.size() > otherSet.size()){
+      return false
+    }
+    let isSubset = true
+    this.values().every(value => {
+      if (!otherSet.values().includes(value)) {
+        isSubset = false
+      }
+      return true
+    })
+    return isSubset
+  }
 }
