@@ -2,7 +2,7 @@
  * @Author: HongxuanG
  * @Date: 2022-04-01 16:01:49
  * @Last Modified by: HongxuanG
- * @Last Modified time: 2022-04-07 15:16:05
+ * @Last Modified time: 2022-04-22 09:21:28
  */
 // 1. 处理执行器抛出的错误
 // 2. 添加异常处理
@@ -243,7 +243,7 @@ const promise2 = new PromiseByMyself((resolve, reject) => {
 })
 const promise1 = new PromiseByMyself((resolve, reject) => {
   console.log('1')
-  resolve?.('鸡哥')
+  resolve?.('ghx')
   console.log('2')
 })
 promise1.then((value) => {
@@ -251,7 +251,7 @@ promise1.then((value) => {
 })
 
 // @ts-expect-error
-PromiseByMyself.deferred = function() {
+PromiseByMyself.deferred = function () {
   const result = {}
   // @ts-expect-error
   result.promise = new PromiseByMyself((resolve, reject) => {
