@@ -1,11 +1,5 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-<<<<<<< HEAD
-import ListItem from './components/ListItem.vue'
-import List from './components/List.vue'
-import Effect from './components/Effect.vue'
-=======
->>>>>>> 1f1a0c9c894a7b7b4ceac954a30e83c0dfccc9a7
 const router = useRouter()
 function goEdit() {
   router.push('/edit')

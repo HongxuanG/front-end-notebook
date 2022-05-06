@@ -14,6 +14,10 @@ namespace CodingCallFunctionByMyself {
     name: 'this is globalCases'
   }
   // testCases.do.call(otherCases)
+
+
+
+  
   // @ts-ignore
   Function.prototype.ghxcall = function (context, ...args) {
     let contextDescriptor = context || global || window

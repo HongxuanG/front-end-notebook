@@ -1,11 +1,16 @@
 <script setup lang="ts">
-interface ListItem {
-  todoEvent: string
-  isFinish: boolean
-}
-let { todoEvent, isFinish } = defineProps<ListItem>()
+import { IListItem } from './types';
+
+const { todoEvent, isFinish, id } = defineProps<{
+  todoEvent: IListItem['todoEvent'],
+  isFinish: IListItem['isFinish'],
+  id: IListItem['id']
+}>()
+const emit = defineEmits<{
+  (e: 'check', data: IListItem): void
+}>()
 function oncheck() {
-  isFinish = !isFinish
+  emit('check', {isFinish, id, todoEvent})
 }
 </script>
 

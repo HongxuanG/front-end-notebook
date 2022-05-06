@@ -17,6 +17,12 @@ namespace CodingBindFunctionByMyself {
   var global = {
     name: 'this is globalCases'
   }
+
+
+  // 原理：返回一个函数，该函数入参要和bind的入参合在一起传给this
+  // 需要注意的是：this可能是一个构造函数，需要做判断，内部需要通过new执行初始化
+
+
   // @ts-ignore
   Function.prototype.mybind = function (context, ...args) {
     const self = this
