@@ -4,14 +4,13 @@
       <ListItem :todoEvent="item.todoEvent" :isFinish="item.isFinish" :id="item.id" @check="onTriggerCheck"></ListItem>
     </template>
   </List>
-  <div ref="root">this is a root element</div>
 </template>
 
 <script lang="ts" setup>
 import ListItem from './ListItem/ListItem.vue'
 import { IListItem } from './ListItem/types'
 import List from './List/List.vue'
-import { reactive, ref } from 'vue'
+import { isReactive, reactive, ref, toRef } from 'vue'
 
 const root = ref(null)
 
@@ -59,10 +58,11 @@ let statue = reactive<IListItem[]>([
 ])
 
 const onTriggerCheck = (data: IListItem) => {
-  console.log('data==>', data)
-  const index = statue.findIndex(item=>item.id === data.id)
+  const index = statue.findIndex((item) => item.id === data.id)
   statue[index].isFinish = !data.isFinish
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+
+</style>

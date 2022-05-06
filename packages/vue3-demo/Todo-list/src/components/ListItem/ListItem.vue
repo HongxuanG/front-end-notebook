@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import { IListItem } from './types';
+import { toRefs, unref } from 'vue'
+import { IListItem } from './types'
 
-const { todoEvent, isFinish, id } = defineProps<{
-  todoEvent: IListItem['todoEvent'],
-  isFinish: IListItem['isFinish'],
+// 这里不能解构，解构会失去响应式
+const props = defineProps<{
+  todoEvent: IListItem['todoEvent']
+  isFinish: IListItem['isFinish']
   id: IListItem['id']
 }>()
+const { todoEvent, isFinish, id } = toRefs(props)
 const emit = defineEmits<{
   (e: 'check', data: IListItem): void
 }>()
 function oncheck() {
-  emit('check', {isFinish, id, todoEvent})
+  emit('check', { isFinish: unref(isFinish), id: unref(id), todoEvent: unref(todoEvent) })
 }
 </script>
 
@@ -45,6 +48,9 @@ function oncheck() {
 .checkbox_checked::after {
   content: '';
   display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
   background-color: chartreuse;
 }
 .list-item_isFinish {

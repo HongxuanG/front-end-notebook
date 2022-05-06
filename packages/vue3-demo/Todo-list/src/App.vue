@@ -16,7 +16,6 @@ function goBack() {
 </script>
 
 <template>
-  <Effect></Effect>
   <h1>To Do List</h1>
 
   <div class="to-do-list">
@@ -28,6 +27,8 @@ function goBack() {
   <div class="container">
     <router-view></router-view>
   </div>
+  <div class="copyright">Power by AaronGuo</div>
+
 </template>
 
 <style>
@@ -49,5 +50,12 @@ function goBack() {
   font-size: 1em;
   background-color: #fff;
   box-shadow: 1px 1px 2px 3px #d2d2d2;
+}
+.copyright{
+  width: 100%;
+  padding: 20px 0;
+  background-color: #ccc;
+  color: #333;
+  text-align: center;
 }
 </style>
