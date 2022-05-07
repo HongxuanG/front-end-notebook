@@ -4,15 +4,15 @@
       <ListItem :todoEvent="item.todoEvent" :isFinish="item.isFinish" :id="item.id" @check="onTriggerCheck"></ListItem>
     </template>
   </List>
+  <button @click="subtract">{{ count }}</button>
 </template>
 
 <script lang="ts" setup>
+import _ from 'lodash'
 import ListItem from './ListItem/ListItem.vue'
 import { IListItem } from './ListItem/types'
 import List from './List/List.vue'
-import { isReactive, reactive, ref, toRef } from 'vue'
-
-const root = ref(null)
+import { isReactive, reactive, ref, toRef, watch, watchEffect } from 'vue'
 
 let statue = reactive<IListItem[]>([
   {
@@ -61,8 +61,47 @@ const onTriggerCheck = (data: IListItem) => {
   const index = statue.findIndex((item) => item.id === data.id)
   statue[index].isFinish = !data.isFinish
 }
+
+let count = ref(20)
+let user = reactive({
+  name: 'ghx',
+  age: 23,
+})
+
+watch(
+  count,
+  (value, oldValue) => {
+    console.log(`old:${oldValue}, new:${value}`)
+  },
+  {
+    immediate: true,
+    deep: true,
+  }
+)
+
+watch(()=>_.cloneDeep(user), (value, oldValue) => {
+  console.log('value', value)
+  console.log('oldValue', oldValue)
+})
+
+const subtract = () => {
+  count.value--
+  user.age--
+}
+
+const countEffect = ref(0)
+
+watchEffect((onInvalidate)=>{
+  onInvalidate(()=>{
+    console.log('清除副作用被触发')
+  })
+  console.log('watchEffect执行',countEffect.value)
+})
+
+setTimeout(()=>{
+  countEffect.value++
+}, 2000)
+
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
