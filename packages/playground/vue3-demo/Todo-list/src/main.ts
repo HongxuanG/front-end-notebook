@@ -1,11 +1,61 @@
-import { createApp } from 'vue'
+// import { createApp } from 'vue'
 import router from './router'
 import './assets/css/normalize.css'
 import App from './App.vue'
-import { createPinia } from 'pinia'
+// import { createPinia } from 'pinia'
 
-const app = createApp(App)
-const pinia = createPinia()
-app.use(pinia)
-app.use(router)
-app.mount('#app')
+import { createRenderer, render } from 'vue'
+
+// const app = createApp(App)
+// const pinia = createPinia()
+// app.use(pinia)
+// app.use(router)
+// app.mount('#app')
+const renderer = createRenderer({
+  insert(el, parent) {
+    console.log(el, parent)
+  },
+  createElement(type) {
+    console.log(type)
+    const element = document.createElement(type)
+    return element
+  },
+  patchProp: function (
+    el,
+    key: string,
+    prevValue: any,
+    nextValue: any,
+    isSVG?: boolean,
+    prevChildren?,
+    parentComponent?,
+    parentSuspense?,
+    unmountChildren?
+  ): void {
+    throw new Error('Function not implemented.')
+  },
+  remove: function (el): void {
+    throw new Error('Function not implemented.')
+  },
+  createText: function (text: string) {
+    throw new Error('Function not implemented.')
+  },
+  createComment: function (text: string) {
+    throw new Error('Function not implemented.')
+  },
+  setText: function (node, text: string): void {
+    throw new Error('Function not implemented.')
+  },
+  setElementText: function (node, text: string): void {
+    console.log('node', node, 'text', text)
+    throw new Error('Function not implemented.')
+  },
+  parentNode: function (node) {
+    throw new Error('Function not implemented.')
+  },
+  nextSibling: function (node) {
+    throw new Error('Function not implemented.')
+  },
+})
+console.log('renderer===>', renderer)
+console.log('App==>',App)
+renderer.createApp(App).mount(document.querySelector('#app'))
