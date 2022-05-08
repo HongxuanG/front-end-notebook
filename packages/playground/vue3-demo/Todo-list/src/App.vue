@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 const router = useRouter()
-function goEdit() {
-  router.push('/edit')
-}
 function goAdd() {
   router.push('/add')
 }
@@ -21,7 +18,6 @@ function goBack() {
   <div class="to-do-list">
     <button type="button" class="btn_primary" @click="goBack">Go Back</button>
     <button type="button" class="btn_primary" @click="backHome">Home</button>
-    <button type="button" class="btn_primary" @click="goEdit">Edit</button>
     <button type="button" class="btn_primary" @click="goAdd">Add</button>
   </div>
   <div class="container">

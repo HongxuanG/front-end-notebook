@@ -30,9 +30,10 @@ importers:
     devDependencies:
       rollup: 2.70.2
 
-  packages/vue3-demo/Todo-list:
+  packages/playground/vue3-demo/Todo-list:
     specifiers:
       '@aaronghx/eslint-config': ^0.1.4
+      '@types/lodash': ^4.14.182
       '@vitejs/plugin-vue': ^2.3.1
       eslint: ^8.13.0
       lodash: ^4.17.21
@@ -49,6 +50,7 @@ importers:
       vue-router: 4.0.15_vue@3.2.33
     devDependencies:
       '@aaronghx/eslint-config': 0.1.4_eslint@8.14.0+typescript@4.6.2
+      '@types/lodash': 4.14.182
       '@vitejs/plugin-vue': 2.3.2_vite@2.9.8+vue@3.2.33
       eslint: 8.14.0
       typescript: 4.6.2
@@ -981,6 +983,10 @@ packages:
 
   /@types/json5/0.0.29:
     resolution: {integrity: sha1-7ihweulOEdK4J7y+UnC86n8+ce4=}
+    dev: true
+
+  /@types/lodash/4.14.182:
+    resolution: {integrity: sha512-/THyiqyQAP9AfARo4pF+aCGcyiQ94tX/Is2I7HofNRqoYLgN1PBoOWu2/zTA5zMxzP5EFutMtWtGAFRKUe961Q==}
     dev: true
 
   /@types/mdast/3.0.10:

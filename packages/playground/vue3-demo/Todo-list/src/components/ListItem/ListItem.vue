@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { toRefs, unref } from 'vue'
+import { toRefs, unref, ref, nextTick } from 'vue'
+import { useListStore } from '../../stores/list';
 import { IListItem } from './types'
+const listStore = useListStore()
 
 // 这里不能解构，解构会失去响应式
 const props = defineProps<{
@@ -15,12 +17,30 @@ const emit = defineEmits<{
 function oncheck() {
   emit('check', { isFinish: unref(isFinish), id: unref(id), todoEvent: unref(todoEvent) })
 }
+const cannotEdit = ref(true)
+const todo = ref(null)
+function ondblClick() {
+  console.log('双击')
+  cannotEdit.value = false
+}
+const currentIndex = listStore.todoList.findIndex((item)=>item.id === id.value)
+function ontodoInput(e: Event) {
+  console.log(e);
+
+  listStore.todoList[currentIndex].todoEvent = (e.target as HTMLInputElement).value
+}
+nextTick(() => {
+  ;(todo.value as any as HTMLInputElement).onblur = () => {
+    console.log('失去焦点')
+    // cannotEdit.value = true
+  }
+})
 </script>
 
 <template>
   <div class="list-item">
     <div :class="['checkbox', isFinish ? 'checkbox_checked' : '']" @click="oncheck"></div>
-    <div :class="['list--item_eventName', isFinish ? 'list-item_isFinish' : '']">{{ todoEvent }}</div>
+    <input :class="['list--item_eventName', isFinish ? 'list-item_isFinish' : '']" type="text" ref="todo" @input="ontodoInput" :readonly="cannotEdit" @dblclick="ondblClick" :value="todoEvent" />
   </div>
 </template>
 
@@ -56,5 +76,12 @@ function oncheck() {
 .list-item_isFinish {
   text-decoration: line-through;
   font-style: italic;
+}
+.list--item_eventName {
+  display: block;
+  width: 100%;
+  outline: none;
+  border: none;
+  background-color: transparent;
 }
 </style>
