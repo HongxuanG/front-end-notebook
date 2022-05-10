@@ -1,15 +1,34 @@
-<script setup lang="ts">
-import { useRouter } from 'vue-router'
-const router = useRouter()
-function goAdd() {
-  router.push('/add')
-}
-function backHome() {
-  router.push('/')
-}
-function goBack() {
-  router.go(-1)
-}
+<script lang="ts">
+// import { useRouter } from 'vue-router'
+// const router = useRouter()
+// function goAdd() {
+//   router.push('/add')
+// }
+// function backHome() {
+//   router.push('/')
+// }
+// function goBack() {
+//   router.go(-1)
+// }
+
+import { defineComponent } from "vue"
+
+export default defineComponent({
+  data:()=>({
+
+  }),
+  methods:{
+    goAdd() {
+      this.$router.push('/add')
+    },
+    backHome() {
+      this.$router.push('/')
+    },
+    goBack() {
+      this.$router.go(-1)
+    }
+  }
+})
 </script>
 
 <template>
