@@ -15,6 +15,7 @@ export default function storagePiniaPlugin(options: Options) {
   const { key, needKeepIds = [] } = options
   return function (context: PiniaPluginContext) {
     const { store } = context
+    console.log(`${key ?? 'pinia'}-${store.$id}`)
     const data = getStorage(`${key ?? 'pinia'}-${store.$id}`)
     if (needKeepIds.length === 0) {
       store.$subscribe(() => {
