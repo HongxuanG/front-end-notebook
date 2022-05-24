@@ -58,9 +58,9 @@ function arrayToTreeWithMap(metaData: any){
     const id = item.id
     const pid = item.pid
     const treeItem = itemMap[id]
-    if(pid === 0){
+    if (pid === 0) {
       result.push(treeItem)
-    }else {
+    } else {
       if(!itemMap[pid]){
         itemMap[pid] = {
           children: []
