@@ -37,6 +37,7 @@ function* gen() {
 //   })
 // })
 type PromiseValue<> = Promise<'name'>
+
 function generatorToAsync(generatorFun: GeneratorFunction) {
   return function() {
     return new Promise((resolve, reject) => {
