@@ -135,19 +135,19 @@ function resolvePromise(promise: PromiseByMyself, x: unknown, resolve?: IResolve
     resolve && resolve(x)
   }
 }
-let promise1 = new PromiseByMyself((resolve, reject) => {
-  console.log('1')
-  setTimeout(() => {
-    // 模拟请求是的错误
-    // throw new Error('执行器发生错误')
-    reject(1000)
-  }, 1000)
-})
-promise1.then().then().then().then().then((value) => {
-  console.log('继续then下去', value)
-}, (reason) => {
-  console.log('error', reason)
-})
+// let promise1 = new PromiseByMyself((resolve, reject) => {
+//   console.log('1')
+//   setTimeout(() => {
+//     // 模拟请求是的错误
+//     // throw new Error('执行器发生错误')
+//     reject(1000)
+//   }, 1000)
+// })
+// promise1.then().then().then().then().then((value) => {
+//   console.log('继续then下去', value)
+// }, (reason) => {
+//   console.log('error', reason)
+// })
 
 
 // @ts-ignore
@@ -168,5 +168,12 @@ PromiseByMyself.deferred = function () {
 //   console.log(res)
 // })
 // console.log(PromiseByMyself.reject('error'))
-module.exports = PromiseByMyself
-
+// module.exports = PromiseByMyself
+let defaultPromise = new Promise((resolve, reject) => {
+  let testFun = function () {
+    console.log('testFun')
+  }
+  resolve(testFun)
+}).then(res => {
+  console.log(res)
+})
