@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    *{
+      padding: 0;
+      margin: 0;
+    }
+    .container{
+      display: flex;
+      flex-flow: column nowrap;
+      height: 100vh;
+      width: 100%;
+    }
+    .topBar{
+      height: 120px;
+      background-color: aqua;
+      width: 100%;
+      flex: none;
+    }
+    .wrapper{
+      flex: 0 1 0;
+      display: flex;
+      flex-flow: column nowrap;
+      background-color: blueviolet;
+    }
+    .context{
+      flex: 0 1 calc(100vh - 120px - 120px );
+      overflow: scroll;
+      flex-wrap: nowrap;
+      background-color: red;
+    }
+    .bottomBar{
+      height: 120px;
+      background-color: bisque;
+      flex: none;
+      width: 100%;
+    } 
+    .infomation{
+      box-sizing: border-box;
+      padding: 24px;
+      margin: 24px;
+      border: 1px solid #c2c2c2;
+      height: 150px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topBar"></div>
+    <div class="wrapper">
+      <div class="context">
+        <div class="infomation">sadfasdfa</div>
+        <div class="infomation">sadfasdfa</div>
+        <div class="infomation">sadfasdfa</div>
+        <div class="infomation">sadfasdfa</div>
+        <div class="infomation">sadfasdfa</div>
+        <div class="infomation">sadfasdfa</div>
+        <div class="infomation">sadfasdfa</div>
+        <div class="infomation">sadfasdfa</div>
+      </div>
+      <div class="bottomBar"></div>
+    </div>
+  </div>
+</body>
+</html>
