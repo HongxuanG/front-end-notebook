@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      section {
+        height: 150px;
+      }
+
+      .box {
+        border: 1px solid #397bb2;
+      }
+
+      .flow-root {
+        border: 1px solid #397bb2;
+        display: flow-root;
+      }
+
+      .float {
+        float: left;
+        width: 200px;
+        height: 100px;
+        border: 1px solid #0e0e0e;
+        margin-right: 10px;
+      }
+      
+    </style>
+  </head>
+  <body>
+    <!-- BFC 的特性：阻止外边距折叠，清除浮动影响 （BFC的元素不会被外界元素的布局影响，也不会影响外界元素的布局）-->
+    <!-- 产生条件：float:left; display:inline-block; position: absolute|fixed; overflow:hidden; display:flex; display: grid;-->
+    <section>
+      <div class="float">浮动元素</div>
+      <div class="box">普通块级元素</div>
+    </section>
+    <section>
+      <div class="float">浮动元素</div>
+      <div class="box flow-root">利用 display:flow-root 创建BFC</div>
+    </section>
+  </body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>圣杯布局-float</title>
+    <style>
+      html {
+        height: 100%;
+      }
+      body {
+        height: 100%;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      .header,
+      .footer {
+        height: 40px;
+        width: 100%;
+        text-align: center;
+        height: 40px;
+        background: red;
+      }
+
+      .footer {
+        clear: both;
+      }
+
+      .container {
+        height: calc(100% - 80px);
+        padding-left: 150px;
+        padding-right: 150px;
+      }
+
+      .container div {
+        position: relative;
+        float: left;
+      }
+
+      .center {
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        background: yellow;
+      }
+
+      .left {
+        width: 150px;
+        height: 100%;
+        background: pink;
+        margin-left: -100%;
+        text-align: center;
+        left: -150px;
+      }
+
+      .right {
+        width: 150px;
+        height: 100%;
+        background: aqua;
+        margin-left: -150px;
+        left: 150px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">header</div>
+    <div class="container">
+      <div class="center">center</div>
+      <div class="left">left</div>
+      <div class="right">right</div>
+    </div>
+    <div class="footer">footer</div>
+  </body>
+</html>

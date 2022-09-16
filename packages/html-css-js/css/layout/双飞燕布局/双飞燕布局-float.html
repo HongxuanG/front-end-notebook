@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>双飞燕布局-float</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        height: 200px;
+      }
+      /* <!-- 脱离文档流 --> */
+      .left {
+        width: 200px;
+        float: left;
+        height: 200px;
+        background-color: red;
+      }
+      /* <!-- 脱离文档流 --> */
+      .right {
+        width: 200px;
+        float: right;
+        height: 200px;
+        background-color: red;
+      }
+      .center {
+        padding-left: 200px;
+        padding-right: 200px;
+        height: 200px;
+        background-color: aquamarine;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="left">left</div>
+      <div class="right">right</div>
+      <div class="center">center</div>
+    </div>
+  </body>
+</html>

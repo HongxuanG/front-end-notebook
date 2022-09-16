@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>双飞燕布局-absolute</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        height: 200px;
+        position: relative;
+      }
+      .left {
+        position: absolute;
+        width: 200px;
+        left: 0;
+        height: 100%;
+        background-color: red;
+      }
+      .right {
+        position: absolute;
+        width: 200px;
+        height: 100%;
+        right: 0;
+        background-color: red;
+      }
+      .center {
+        position: absolute;
+        height: 100%;
+        left: 200px;
+        right: 200px;
+        background-color: bisque;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="left">left</div>
+      <div class="center">center</div>
+      <div class="right">right</div>
+    </div>
+  </body>
+</html>
