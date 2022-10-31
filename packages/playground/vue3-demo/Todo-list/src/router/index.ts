@@ -10,5 +10,14 @@ const routes: RouteRecordRaw[] = [
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
+  scrollBehavior(to,from,savedPosition){
+    console.log('scrollBehavior to===>', to)
+    console.log('scrollBehavior from===>', from)
+    console.log('scrollBehavior savedPosition===>', savedPosition)
+    return {
+      top: 0,
+      behavior: 'smooth'
+    }
+  }
 })
 export default router

@@ -24,8 +24,10 @@ fileRef.onchange = async (event) => {
     const buffer = await readBuffer(singleFile, 0, 8)
     const uint8array = new Uint8Array(buffer)
     console.log('uint8array', uint8array)
-    console.log(buffer)
+    console.log('ArrayBuffer', buffer)
     console.log('是不是png格式的图片', isPNG(uint8array))
+    console.log('是不是jpg格式的图片', isJPEG(uint8array))
+    console.log('是不是pdf格式的图片', isPDF(uint8array))
   }catch(e){
     console.error(e);
   }
@@ -50,5 +52,5 @@ function stringToBytes(string) {
 // [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]就是png格式的魔数 
 // 魔数就是文件的前几个字节，因为都是固定的，所以可以用来判断文件类型
 const isPNG = checkMagicNumber([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])
-const isJPEG = checkMagicNumber([0xff, 0xd8, 0xff])
+const isJPEG = checkMagicNumber([0xFF, 0xD8, 0xFF])
 const isPDF = checkMagicNumber(stringToBytes('%PDF'))
